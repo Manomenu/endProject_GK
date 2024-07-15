@@ -1,15 +1,8 @@
 #pragma once
-#include <cstdio>
-#include <iostream>
+#include <config.h>
 #include "controllers/app_controller/app_controller.h"
-#include <GLFW/glfw3.h>
-#include <glad/glad.h>
 
-#ifdef _WIN32
-#include <Windows.h>
-#endif
-#undef min
-#undef max
+
 
 void turn_on_console()
 {
@@ -30,13 +23,13 @@ int main()
 {
 	turn_on_console();
 
-	auto configuration = AppController_Configuration
-	{
-		500,	// default_window_width
-		500,	// default_window_height
-	};
+	AppController_Configuration configuration;
+	configuration.default_window_width = 1600;
+	configuration.default_window_height = 900;
 
-	auto app_controller = AppController{ configuration };
+	AppController app_controller;
+
+	app_controller.initialize(configuration);
 	app_controller.run();
 
 
