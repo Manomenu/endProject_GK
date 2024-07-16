@@ -34,15 +34,14 @@ set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 
 
 add_subdirectory(thirdparty/glfw-3.3.2)			#window oppener
-add_subdirectory(thirdparty/glad)			#opengl loader
+add_subdirectory(thirdparty/glad)				#opengl loader
 add_subdirectory(thirdparty/stb_image)			#loading immaged
 add_subdirectory(thirdparty/stb_truetype)		#loading ttf files
-add_subdirectory(thirdparty/raudio)			#audio
-add_subdirectory(thirdparty/glm)			#math
+add_subdirectory(thirdparty/raudio)				#audio
+add_subdirectory(thirdparty/glm)				#math
 add_subdirectory(thirdparty/imgui-docking)		#ui
-#----------V-----------------------V------------#low level programming channel libraries												
-add_subdirectory(thirdparty/safeSave)			#saving data, designed for gamedev. It also makes backups so the player won't loose saves.
-add_subdirectory(thirdparty/profilerLib)		#profiling, just a simpe library for measuring elapsed time
+add_subdirectory(thirdparty/assimp)				#object loader
+
 
 
 # MY_SOURCES is defined to be a list of all the source files for my project
@@ -80,8 +79,8 @@ if(MSVC) # If using the VS compiler...
 
 	set_target_properties("${CMAKE_PROJECT_NAME}" PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup") #no console
 	
-	#set_property(TARGET "${CMAKE_PROJECT_NAME}" PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreadedDebug<$<CONFIG:Debug>:Debug>")
-	#set_property(TARGET "${CMAKE_PROJECT_NAME}" PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>:Release>")
+	set_property(TARGET "${CMAKE_PROJECT_NAME}" PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreadedDebug<$<CONFIG:Debug>:Debug>")
+	set_property(TARGET "${CMAKE_PROJECT_NAME}" PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>:Release>")
 
 endif()
 
@@ -100,6 +99,5 @@ target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE
 	stb_truetype 
 	raudio 
 	imgui 
-	safeSave 
-	profilerLib 
+	assimp
 )
