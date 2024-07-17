@@ -1,11 +1,16 @@
 #include <GLFW/glfw3.h>
 #include <glad/glad.h>
+#include <stb_image/stb_image.h>
 #include <chrono>
 #include <unordered_map>
 #include <glm/glm.hpp>
 #include <iostream>
 #include <vector>
 #include <cstdio>
+#include <assimp/Importer.hpp>	// C++ Importer interface
+#include <assimp/scene.h>		// Output data structure
+#include <assimp/postprocess.h>	// Post processing flags
+#include <cstring>
 
 #define REMOVE_IMGUI 0
 
@@ -24,3 +29,11 @@
 
 
 typedef unsigned int uint;
+typedef unsigned short ushort;
+typedef unsigned char uchar;
+
+#define PROJECT_ERROR(message)																						  \
+    {																									      \
+        std::cerr << "Error at line " << __LINE__ << " in file " << __FILE__ << ": " << message << std::endl; \
+		exit(1);																							  \
+    }
