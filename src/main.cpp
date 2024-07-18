@@ -1,4 +1,3 @@
-#pragma once
 #include <config.h>
 #include "controllers/app_controller/app_controller.h"
 

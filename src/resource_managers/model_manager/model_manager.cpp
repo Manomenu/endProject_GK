@@ -1,6 +1,6 @@
 #include "model_manager.h"
 
-bool ModelManager::load_mesh(const std::string& file_path)
+void ModelManager::load_model_to_single_mesh(const std::string& file_path)
 {
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(file_path, ASSIMP_LOAD_FLAGS);
@@ -23,7 +23,7 @@ void ModelManager::process_node(aiNode* node, const aiScene* scene)
     for (uint i = 0; i < node->mNumMeshes; ++i)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        meshes.push_back(process_mesh(mesh, scene));
+        mesh_management::merge_meshes(this->mesh, process_mesh(mesh, scene));
     }
 
     // then do the same for each of its children

@@ -1,4 +1,3 @@
-#pragma once
 #include "app_controller/internals/gl_error_handling.h"
 
 void GLAPIENTRY internals::glDebugOutput(GLenum source,

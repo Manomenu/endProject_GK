@@ -1,17 +1,18 @@
 #pragma once
 #include <config.h>
-#include "internal/mesh.h"
+#include "internal/mesh/mesh.h"
 
 #define ASSIMP_LOAD_FLAGS (aiProcess_Triangulate | aiProcess_GenSmoothNormals |  aiProcess_JoinIdenticalVertices | aiProcess_FlipUVs)
 
 struct ModelManager
 {
 public:
-    bool load_mesh(const std::string& file_path);
-    const std::vector<Mesh>& get_meshes() { return meshes; }
+    void load_model_to_single_mesh(const std::string& file_path);
+    const Mesh& get_mesh() { return mesh; }
+
 
 private:
-    std::vector<Mesh> meshes;
+    Mesh mesh;
     std::vector<Texture> textures_loaded;
     std::string directory;
 

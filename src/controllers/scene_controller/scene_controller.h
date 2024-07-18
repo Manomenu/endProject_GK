@@ -4,6 +4,9 @@
 #include <entities_controller/entities_controller.h>
 #include <transform_component.h>
 #include <tower/tower_data.h>
+#include <model_manager/model_manager.h>
+#include <render_component.h>
+#include <model_manager/model_manager.h>
 
 struct SceneController
 {
