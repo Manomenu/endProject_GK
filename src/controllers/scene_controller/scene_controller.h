@@ -13,12 +13,14 @@ struct SceneController
 public:
 	void initialize(
 		EntitiesController& entities_controller,
-		std::unordered_map<uint, TransformComponent>& transform_components
+		std::unordered_map<uint, TransformComponent>& transform_components,
+		std::unordered_map<uint, RenderComponent>& render_components
 	);
 	void create_tower(
 		TowerData& tower_data,
 		EntitiesController& entities_controller,
-		std::unordered_map<uint, TransformComponent>& transform_components
+		std::unordered_map<uint, TransformComponent>& transform_components,
+		std::unordered_map<uint, RenderComponent>& render_components
 	);
 	uint get_towers_count() { return towers.size(); }
 

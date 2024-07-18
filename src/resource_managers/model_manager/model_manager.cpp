@@ -8,13 +8,15 @@ void ModelManager::load_model_to_single_mesh(const std::string& file_path)
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
         std::string error_message = std::string("ERROR::ASSIMP:: ") + importer.GetErrorString() + "\n";
-        PROJECT_ERROR(error_message);
+        return;
     }
 
     // retrieve the directory path of the filepath
     directory = file_path.substr(0, file_path.find_last_of('/'));
 
     process_node(scene->mRootNode, scene);
+
+
 }
 
 void ModelManager::process_node(aiNode* node, const aiScene* scene)
@@ -42,7 +44,7 @@ Mesh ModelManager::process_mesh(aiMesh* mesh, const aiScene* scene)
     for (uint i = 0; i < mesh->mNumVertices; ++i)
     {
         Vertex vertex;
-        vertex.positions =
+        vertex.position =
         {
             mesh->mVertices[i].x,
             mesh->mVertices[i].y,

@@ -16,11 +16,21 @@ public:
         this->indices = indices;
         this->textures = textures;
     }
+
     std::vector<Vertex>& get_vertices() { return vertices; }
     std::vector<uint>& get_indices() { return indices; }
     std::vector<Texture>& get_textures() { return textures; }
+    const std::vector<Vertex>& get_vertices() const { return vertices; }
+    const std::vector<uint>& get_indices() const { return indices; }
+    const std::vector<Texture>& get_textures() const { return textures; }
+
+    const uint& get_VAO() const { return VAO; }
+
+    bool set_up_buffers();
 
 private:
+    bool buffers_set = false;
+    uint VAO, EBO, VBO;
     std::vector<Vertex> vertices;
     std::vector<uint> indices;
     std::vector<Texture> textures;
