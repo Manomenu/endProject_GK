@@ -4,7 +4,7 @@
 
 ## Project intentions
 I want to use <b>new</b> keyword only if it actually makes sense. 
-Besides that I've decided to pass structs that have default constructor, and optionally <b>initialize<\b> method.
+Besides that I've decided to pass structs that have default constructor, and optionally <b>initialize</b> method.
 Thanks to it I can set up class in a more flexible manner and don't have to implement unnecessary =operator overrides.
 
 To organize my code I've decided to use Entity Component System style. It will help me later to run my code in parallel more easily and I can extend 
