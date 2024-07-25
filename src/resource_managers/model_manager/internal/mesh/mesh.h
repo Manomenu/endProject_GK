@@ -24,13 +24,17 @@ public:
     const std::vector<uint>& get_indices() const { return indices; }
     const std::vector<Texture>& get_textures() const { return textures; }
 
-    const uint& get_VAO() const { return VAO; }
+    const uint& get_VAO() const 
+    {
+        assert(buffers_set == true);
+        return VAO; 
+    }
 
     bool set_up_buffers();
 
 private:
     bool buffers_set = false;
-    uint VAO, EBO, VBO;
+    uint VAO = 0, EBO = 0, VBO = 0;
     std::vector<Vertex> vertices;
     std::vector<uint> indices;
     std::vector<Texture> textures;

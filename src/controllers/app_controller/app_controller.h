@@ -5,7 +5,9 @@
 #include <gui_controller/gui_controller.h>
 #include <platform_controller/platform_controller.h>
 #include <transform_component.h>
+#include <camera_component.h>
 #include <systems/render_system/render_system.h>
+#include <systems/camera_system/camera_system.h>
 #include <entities_controller/entities_controller.h>
 #include <scene_controller/scene_controller.h>
 #include <config.h>
@@ -32,7 +34,12 @@ private:
 	PlatformController platform_controller;
 	SceneController scene_controller;
 
-	RenderSystem render_system;
+	ShaderManager shader_manager;
 
-	std::unordered_map<uint, TransformComponent> transform_components;
+	RenderSystem render_system;
+	CameraSystem camera_system;
+
+	ComponentSet<TransformComponent> transform_components;
+	ComponentSet<RenderComponent> render_components;
+	CameraComponent camera_component;
 };

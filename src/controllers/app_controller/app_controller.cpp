@@ -15,14 +15,16 @@ void AppController::initialize(const AppController_Configuration &configuration)
 #endif
 
 	window = glfwCreateWindow(configuration.default_window_width, configuration.default_window_height, "End Project", nullptr, nullptr);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 	glfwMakeContextCurrent(window);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSwapInterval(1);
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
 		std::cout << "Couldn't load opengl" << std::endl;
 		glfwTerminate();
 	}
+
+	glEnable(GL_DEPTH_TEST);
 
 #if PRODUCTION_BUILD == 0
 	internals::enable_gl_error_handling();
@@ -52,9 +54,18 @@ void AppController::initialize(const AppController_Configuration &configuration)
 	#endif
 #pragma endregion
 
-#pragma region systems_setup
+#pragma region stb_image
+	stbi_set_flip_vertically_on_load(true);
+#pragma endregion
+
+#pragma region systems_and_managers_and_controllers_setup
+	// todo swithc to managers except app_controller!
 	platform_controller.initialize(window);
-	scene_controller.initialize(entities_controller, transform_components);
+	scene_controller.initialize(entities_controller, transform_components, render_components, camera_component);
+	shader_manager.initialize(SHADERS_PATH "model.vs", SHADERS_PATH "model.fs");
+	shader_manager.use();
+	render_system.initialize(shader_manager);
+	camera_system.initialize(shader_manager);
 #pragma endregion
 }
 
@@ -77,13 +88,26 @@ void AppController::run()
 		#endif
 	#pragma endregion
 
+		if (camera_component.yaw < 1000)
+		{
+			int xdx = camera_component.yaw;
+		}
 		//systems
-		render_system.update(platform_controller);
+		bool should_close = camera_system.update(platform_controller, transform_components, scene_controller.get_camera(), camera_component, deltaTime);
+		if (camera_component.yaw > 1000)
+		{
+			int xd = 3;
+		}
+		if (should_close) glfwSetWindowShouldClose(window, true);
+		render_system.update(platform_controller, scene_controller, transform_components, render_components);
 
 	#pragma region imgui
 		#if REMOVE_IMGUI == 0
 		GuiData gui_data;
-		gui_data.towers_count = scene_controller.get_towers_count();
+		gui_data.scene.towers_count = scene_controller.get_towers_count();
+		gui_data.camera.pitch = camera_component.pitch;
+		gui_data.camera.yaw = camera_component.yaw;
+		gui_data.camera.position = transform_components[scene_controller.get_camera()].position;
 
 		gui_controller.update_data(gui_data);
 		gui_controller.build_gui();

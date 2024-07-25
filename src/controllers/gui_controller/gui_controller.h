@@ -4,10 +4,19 @@
 #include <config.h>
 #include <platform_controller/platform_controller.h>
 
-
 struct GuiData
 {
-	uint towers_count = 0;
+	struct
+	{
+		float yaw;
+		float pitch;
+		glm::vec3 position;
+	} camera;
+
+	struct
+	{
+		uint towers_count = 0;
+	} scene;
 };
 
 struct GuiController

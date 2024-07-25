@@ -1,5 +1,4 @@
 #define REMOVE_IMGUI 0
-
 #if REMOVE_IMGUI == 0
 #include <imgui.h>
 #include <backends/imgui_impl_glfw.h>
@@ -9,6 +8,8 @@
 #include <chrono>
 #include <unordered_map>
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <vector>
 #include <cstdio>
@@ -31,7 +32,12 @@ typedef unsigned int uint;
 typedef unsigned short ushort;
 typedef unsigned char uchar;
 
+template<typename Component>
+using ComponentSet = std::unordered_map<uint, Component>;
+
+
 #define MODELS_PATH RESOURCES_PATH "models/"
+#define SHADERS_PATH RESOURCES_PATH "shaders/"
 
 #define PROJECT_ERROR(message)																						  \
     {																									      \

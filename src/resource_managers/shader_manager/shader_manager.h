@@ -14,7 +14,7 @@
 struct ShaderManager
 {
 public:
-    unsigned int id;
+    unsigned int ID;
     // constructor generates the shader on the fly
     // ------------------------------------------------------------------------
     void initialize(const char* vertexPath, const char* fragmentPath, const char* geometryPath = nullptr)
@@ -98,9 +98,25 @@ public:
             glDeleteShader(geometry);
 
     }
+
+    uint get_view_location()
+    {
+        return glGetUniformLocation(ID, "view");
+    }
+
+    uint get_projection_location()
+    {
+        return glGetUniformLocation(ID, "projection");
+    }
+
+    uint get_model_location()
+    {
+        return glGetUniformLocation(ID, "model");;
+    }
+
     // activate the shader
     // ------------------------------------------------------------------------
-    void use() 
+    void use() //todo add parameter to use MODEL_SHADER = 0 etc.
     { 
         glUseProgram(ID); 
     }

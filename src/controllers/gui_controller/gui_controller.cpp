@@ -2,7 +2,7 @@
 
 void GuiController::update_data(GuiData& new_data)
 {
-	data.towers_count = new_data.towers_count;
+	memcpy(&data, &new_data, sizeof(GuiData));
 }
 
 void GuiController::build_gui()
@@ -12,7 +12,18 @@ void GuiController::build_gui()
 	ImGui::SeparatorText("Entities count");
 	ImGui::Text("Towers:");
 	ImGui::SameLine();
-	ImGui::TextColored(ImVec4(1.0f, 0.0f, 1.0f, 1.0f), "%d", data.towers_count);
+	ImGui::TextColored(ImVec4(1.0f, 0.0f, 1.0f, 1.0f), "%d", data.scene.towers_count);
+
+	ImGui::SeparatorText("Camera details");
+	ImGui::Text("Yaw:");
+	ImGui::SameLine();
+	ImGui::TextColored(ImVec4(1.0f, 0.0f, 1.0f, 1.0f), "%f", data.camera.yaw);
+	ImGui::Text("Pitch:");
+	ImGui::SameLine();
+	ImGui::TextColored(ImVec4(1.0f, 0.0f, 1.0f, 1.0f), "%f", data.camera.pitch);
+	ImGui::Text("Position:");
+	ImGui::SameLine();
+	ImGui::TextColored(ImVec4(1.0f, 0.0f, 1.0f, 1.0f), "[ %f, %f, %f ]", data.camera.position.x, data.camera.position.y, data.camera.position.z);
 
 	ImGui::End();
 }
