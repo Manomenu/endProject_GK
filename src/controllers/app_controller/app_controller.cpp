@@ -88,16 +88,8 @@ void AppController::run()
 		#endif
 	#pragma endregion
 
-		if (camera_component.yaw < 1000)
-		{
-			int xdx = camera_component.yaw;
-		}
 		//systems
 		bool should_close = camera_system.update(platform_controller, transform_components, scene_controller.get_camera(), camera_component, deltaTime);
-		if (camera_component.yaw > 1000)
-		{
-			int xd = 3;
-		}
 		if (should_close) glfwSetWindowShouldClose(window, true);
 		render_system.update(platform_controller, scene_controller, transform_components, render_components);
 

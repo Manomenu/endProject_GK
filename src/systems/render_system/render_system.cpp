@@ -40,8 +40,8 @@ void RenderSystem::update(
 			model_location, 1, GL_FALSE,
 			glm::value_ptr(model));
 
-		glBindTexture(GL_TEXTURE_2D, render_component.material);
+		//glBindTexture(GL_TEXTURE_2D, render_component.material);
 		glBindVertexArray(render_component.mesh);
-		glDrawArrays(GL_TRIANGLES, 0, render_component.mesh_internal_data.get_vertices().size() / 3); // todo (move vertices, indicies vectors to render_component...)
+		glDrawArrays(GL_TRIANGLES, 0, render_component.mesh_internal_data.get_vertices().size()); // todo make verticescount param in render_comp
 	}
 }
