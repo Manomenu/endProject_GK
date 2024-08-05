@@ -39,8 +39,3 @@ private:
     std::vector<uint> indices;
     std::vector<Texture> textures;
 };
-
-namespace mesh_management
-{
-    void merge_meshes(Mesh& destination_mesh, Mesh& merged_mesh);
-}

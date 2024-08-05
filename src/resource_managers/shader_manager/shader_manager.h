@@ -104,21 +104,15 @@ public:
         return glGetUniformLocation(ID, "view");
     }
 
-    uint get_projection_location()
-    {
-        return glGetUniformLocation(ID, "projection");
-    }
-
-    uint get_model_location()
-    {
-        return glGetUniformLocation(ID, "model");;
-    }
-
     // activate the shader
     // ------------------------------------------------------------------------
     void use() //todo add parameter to use MODEL_SHADER = 0 etc.
     { 
         glUseProgram(ID); 
+    }
+    void set_uniform(const std::string &name, uint value)
+    {
+        glUniform1i(glGetUniformLocation(ID, name.c_str()), value);
     }
     // utility uniform functions
     // ------------------------------------------------------------------------

@@ -91,7 +91,7 @@ void AppController::run()
 		//systems
 		bool should_close = camera_system.update(platform_controller, transform_components, scene_controller.get_camera(), camera_component, deltaTime);
 		if (should_close) glfwSetWindowShouldClose(window, true);
-		render_system.update(platform_controller, scene_controller, transform_components, render_components);
+		render_system.update(shader_manager, platform_controller, scene_controller, transform_components, render_components);
 
 	#pragma region imgui
 		#if REMOVE_IMGUI == 0

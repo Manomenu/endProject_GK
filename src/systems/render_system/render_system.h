@@ -8,13 +8,11 @@ struct RenderSystem
 {
 public:
 	void initialize(ShaderManager& shader_manager);
-	void update(
-		PlatformController& platform_controller, 
-		SceneController& scene_controller, 
-		ComponentSet<TransformComponent>& transform_components,
-		ComponentSet<RenderComponent>& render_components
+	void update(ShaderManager& shader_manager, 
+		PlatformController& platform_controller, SceneController& scene_controller, 
+		ComponentSet<TransformComponent>& transform_components, ComponentSet<RenderComponent>& render_components
 	);
 
 private:
-	uint model_location;
+	void set_model(ShaderManager& shader_manager, TransformComponent& transform);
 };

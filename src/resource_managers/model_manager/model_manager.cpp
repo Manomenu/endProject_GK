@@ -15,8 +15,6 @@ void ModelManager::load_model_to_single_mesh(const std::string& file_path)
     directory = file_path.substr(0, file_path.find_last_of('/'));
 
     process_node(scene->mRootNode, scene);
-
-
 }
 
 void ModelManager::process_node(aiNode* node, const aiScene* scene)

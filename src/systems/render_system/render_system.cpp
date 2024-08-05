@@ -4,15 +4,13 @@ void RenderSystem::initialize(ShaderManager& shader_manager)
 {
 	shader_manager.use();
 
-	model_location = shader_manager.get_model_location();
-
-	uint projLocation = shader_manager.get_projection_location();
 	glm::mat4 projection = glm::perspective(
 		45.0f, 640.0f / 480.0f, 0.1f, 10.0f); // todo move to config
-	glUniformMatrix4fv(projLocation, 1, GL_FALSE, glm::value_ptr(projection));
+	shader_manager.set_mat4("projection", projection);
 }
 
 void RenderSystem::update(
+	ShaderManager& shader_manager,
 	PlatformController& platform_controller,
 	SceneController& scene_controller,
 	ComponentSet<TransformComponent>& transform_components,
@@ -30,18 +28,48 @@ void RenderSystem::update(
 		RenderComponent& render_component = data.second;
 		uint entity = data.first;
 
-		TransformComponent& transform = transform_components[entity];
-		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, transform.position);
-		model = glm::rotate(
-			model, glm::radians(transform.eulers.z),
-			{ 0.0f, 0.0f, 1.0f });
-		glUniformMatrix4fv(
-			model_location, 1, GL_FALSE,
-			glm::value_ptr(model));
+		set_model(shader_manager, transform_components[entity]);
 
-		//glBindTexture(GL_TEXTURE_2D, render_component.material);
+		uint diffuseNr = 1;
+		uint specularNr = 1;
+		auto& textures = render_component.mesh_internal_data.get_textures();
+		for (uint i = 0; i < textures.size(); i++)
+		{
+			glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
+			// retrieve texture number (the N in diffuse_textureN)
+			std::string number, name;
+			Texture::Type type = textures[i].type;
+			if (type == Texture::Type::DIFFUSE)
+			{
+				name = "texture_diffuse";
+				number = std::to_string(diffuseNr++);
+			}
+			else if (type == Texture::Type::SPECULAR)
+			{
+				name = "texture_specular";
+				number = std::to_string(specularNr++); // transfer unsigned int to string
+			}
+
+			// now set the sampler to the correct texture unit
+			shader_manager.set_uniform((name + number).c_str(), i);
+			// and finally bind the texture
+			glBindTexture(GL_TEXTURE_2D, textures[i].id);
+			break;
+		}
+
+		//glBindTexture(GL_TEXTURE_2D, render_component.material); // to refactor instead of this upper logic? move samplers and material to bind to render_component
 		glBindVertexArray(render_component.mesh);
-		glDrawArrays(GL_TRIANGLES, 0, render_component.mesh_internal_data.get_vertices().size()); // todo make verticescount param in render_comp
+		glDrawElements(GL_TRIANGLES, render_component.mesh_internal_data.get_indices().size(), GL_UNSIGNED_INT, 0); // todo make verticescount param in render_comp
 	}
+}
+
+void RenderSystem::set_model(ShaderManager& shader_manager, TransformComponent& transform)
+{
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, transform.position);
+	model = glm::rotate(
+		model, glm::radians(transform.eulers.z),
+		{ 0.0f, 0.0f, 1.0f });
+
+	shader_manager.set_mat4("model", model);
 }
