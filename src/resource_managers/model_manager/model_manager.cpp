@@ -1,6 +1,6 @@
 #include "model_manager.h"
 
-void ModelManager::load_model_to_single_mesh(const std::string& file_path)
+void ModelManager::load_model_to_render_component(const std::string& file_path, RenderComponent& render_component)
 {
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(file_path, ASSIMP_LOAD_FLAGS);
@@ -14,26 +14,28 @@ void ModelManager::load_model_to_single_mesh(const std::string& file_path)
     // retrieve the directory path of the filepath
     directory = file_path.substr(0, file_path.find_last_of('/'));
 
-    process_node(scene->mRootNode, scene);
+    process_node(scene->mRootNode, scene, render_component);
 }
 
-void ModelManager::process_node(aiNode* node, const aiScene* scene)
+void ModelManager::process_node(aiNode* node, const aiScene* scene, RenderComponent& render_component)
 {
     // process all the node's meshes (if any)
     for (uint i = 0; i < node->mNumMeshes; ++i)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        mesh_management::merge_meshes(this->mesh, process_mesh(mesh, scene));
+        
+        render_component.parts.resize(render_component.parts.size() + 1);
+        process_mesh(mesh, scene, render_component.parts.back());
     }
 
     // then do the same for each of its children
     for (uint i = 0; i < node->mNumChildren; ++i)
     {
-        process_node(node->mChildren[i], scene);
+        process_node(node->mChildren[i], scene, render_component);
     }
 }
 
-Mesh ModelManager::process_mesh(aiMesh* mesh, const aiScene* scene)
+void ModelManager::process_mesh(aiMesh* mesh, const aiScene* scene, RenderComponent::RenderPart& render_part)
 {
     std::vector<Vertex> vertices;
     std::vector<uint> indices;
@@ -76,16 +78,20 @@ Mesh ModelManager::process_mesh(aiMesh* mesh, const aiScene* scene)
         std::vector<Texture> diffuse_textures = 
             load_material_textures(material, aiTextureType_DIFFUSE, Texture::Type::DIFFUSE);
         textures.insert(textures.end(), diffuse_textures.begin(), diffuse_textures.end());
+        render_part.diffuse_id = diffuse_textures.back().id;
 
         std::vector<Texture> specular_textures = 
             load_material_textures(material, aiTextureType_SPECULAR, Texture::Type::SPECULAR);
         textures.insert(textures.end(), specular_textures.begin(), specular_textures.end());
+        render_part.specular_id = specular_textures.back().id;
     }
 
-    Mesh return_mesh;
-    return_mesh.initialize(vertices, indices, textures);
+    Mesh _mesh;
+    _mesh.initialize(vertices, indices, textures);
+    _mesh.set_up_buffers();
 
-    return return_mesh;
+    render_part.mesh_id = _mesh.get_VAO();
+    render_part.indices_size = _mesh.get_indices().size();
 }
 
 std::vector<Texture> ModelManager::load_material_textures(aiMaterial* mat, aiTextureType type, Texture::Type texture_type)

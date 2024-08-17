@@ -23,10 +23,10 @@ void SceneController::create_tower(
 	TransformComponent& transform = transform_components[tower];
 	transform.position = tower_data.position;
 
-	ModelManager model_manager;
-	model_manager.load_model_to_single_mesh(tower_data.mesh_file_path);
-	
 	RenderComponent& render = render_components[tower];
+	ModelManager model_manager;	
+	model_manager.load_model_to_render_component(tower_data.mesh_file_path, render);
+	
 	render.mesh_internal_data = model_manager.get_mesh();
 	render.mesh_internal_data.set_up_buffers();
 	const auto& textures = render.mesh_internal_data.get_textures();
