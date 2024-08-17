@@ -18,6 +18,7 @@ public:
 
 private:
     uint viewLocation;
+    uint viewPosLocation;
     glm::vec3 global_up = { 0.0f, 0.0f, 1.0f };
     float last_x, last_y;
     bool first_rotation = true, entered_rotation_mode = false, left_rotation_mode = false;

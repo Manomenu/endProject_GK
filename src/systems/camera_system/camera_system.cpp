@@ -4,6 +4,7 @@ void CameraSystem::initialize(ShaderManager& shader_manager) {
 
     shader_manager.use();
     viewLocation = shader_manager.get_view_location();
+    viewPosLocation = shader_manager.get_uniform_location("viewPos");
 }
 
 glm::mat4 CameraSystem::get_view_matrix(CameraComponent& camera_component, TransformComponent& transform_component)
@@ -119,9 +120,10 @@ bool CameraSystem::update(
         }
     }
 
-
     glm::mat4 view = get_view_matrix(camera_component, transform);
     glUniformMatrix4fv(viewLocation, 1, GL_FALSE, glm::value_ptr(view));
+    
+    glUniform3fv(viewPosLocation, 1, glm::value_ptr(transform.position));
 
     return false;
 }

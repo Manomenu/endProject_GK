@@ -78,17 +78,22 @@ void ModelManager::process_mesh(aiMesh* mesh, const aiScene* scene, RenderCompon
         std::vector<Texture> diffuse_textures = 
             load_material_textures(material, aiTextureType_DIFFUSE, Texture::Type::DIFFUSE);
         textures.insert(textures.end(), diffuse_textures.begin(), diffuse_textures.end());
-        render_part.diffuse_id = diffuse_textures.back().id;
+        if (diffuse_textures.size() > 0)
+            render_part.diffuse_id = diffuse_textures.back().id;
+        else
+            render_part.diffuse_id = 0;
 
         std::vector<Texture> specular_textures = 
             load_material_textures(material, aiTextureType_SPECULAR, Texture::Type::SPECULAR);
         textures.insert(textures.end(), specular_textures.begin(), specular_textures.end());
-        render_part.specular_id = specular_textures.back().id;
+        if (specular_textures.size() > 0)
+            render_part.specular_id = specular_textures.back().id;
+        else
+            render_part.specular_id = 0;
     }
 
     Mesh _mesh;
     _mesh.initialize(vertices, indices, textures);
-    _mesh.set_up_buffers();
 
     render_part.mesh_id = _mesh.get_VAO();
     render_part.indices_size = _mesh.get_indices().size();

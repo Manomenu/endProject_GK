@@ -30,36 +30,19 @@ void RenderSystem::update(
 
 		set_model(shader_manager, transform_components[entity]);
 
-		uint diffuseNr = 1;
-		uint specularNr = 1;
-		auto& textures = render_component.mesh_internal_data.get_textures();
-		for (uint i = 0; i < textures.size(); i++)
+		for each (const RenderComponent::RenderPart& render_part in render_component.parts)
 		{
-			glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
-			// retrieve texture number (the N in diffuse_textureN)
-			std::string number, name;
-			Texture::Type type = textures[i].type;
-			if (type == Texture::Type::DIFFUSE)
-			{
-				name = "texture_diffuse";
-				number = std::to_string(diffuseNr++);
-			}
-			else if (type == Texture::Type::SPECULAR)
-			{
-				name = "texture_specular";
-				number = std::to_string(specularNr++); // transfer unsigned int to string
-			}
+			glActiveTexture(GL_TEXTURE0);
+			shader_manager.set_uniform("material.diffuse", 0);
+			glBindTexture(GL_TEXTURE_2D, render_part.diffuse_id);
+			
+			glActiveTexture(GL_TEXTURE1);
+			shader_manager.set_uniform("material.specular", 1);
+			glBindTexture(GL_TEXTURE_2D, render_part.specular_id);
 
-			// now set the sampler to the correct texture unit
-			shader_manager.set_uniform((name + number).c_str(), i);
-			// and finally bind the texture
-			glBindTexture(GL_TEXTURE_2D, textures[i].id);
-			break;
-		}
-
-		//glBindTexture(GL_TEXTURE_2D, render_component.material); // to refactor instead of this upper logic? move samplers and material to bind to render_component
-		glBindVertexArray(render_component.mesh);
-		glDrawElements(GL_TRIANGLES, render_component.mesh_internal_data.get_indices().size(), GL_UNSIGNED_INT, 0); // todo make verticescount param in render_comp
+			glBindVertexArray(render_part.mesh_id);
+			glDrawElements(GL_TRIANGLES, render_part.indices_size, GL_UNSIGNED_INT, 0); 
+		}		
 	}
 }
 

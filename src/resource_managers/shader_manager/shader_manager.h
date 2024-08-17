@@ -99,9 +99,14 @@ public:
 
     }
 
-    uint get_view_location()
+    uint get_view_location() // todo refactor: delete it
     {
         return glGetUniformLocation(ID, "view");
+    }
+
+    uint get_uniform_location(std::string uniform_name)
+    {
+        return glGetUniformLocation(ID, uniform_name.c_str());
     }
 
     // activate the shader

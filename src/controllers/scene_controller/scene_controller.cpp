@@ -1,6 +1,10 @@
 #include "scene_controller.h"
 
-void SceneController::initialize(EntitiesController& entities_controller, ComponentSet<TransformComponent>& transform_components, ComponentSet<RenderComponent>& render_components, CameraComponent& camera_component
+void SceneController::initialize(EntitiesController& entities_controller, 
+	ComponentSet<TransformComponent>& transform_components, 
+	ComponentSet<RenderComponent>& render_components,
+	ComponentSet<LightComponent>& light_components,
+	CameraComponent& camera_component
 )
 {
 	TowerData tower_data;
@@ -10,6 +14,25 @@ void SceneController::initialize(EntitiesController& entities_controller, Compon
 	CameraData camera_data;
 	camera_data.position = glm::vec3(3, 3, 3);
 	create_camera(camera_data, entities_controller, transform_components, camera_component);
+
+	DirectionalLightData dir_light_data;
+	dir_light_data.ambient = glm::vec3(0.05f, 0.05f, 0.05f);
+	dir_light_data.diffuse = glm::vec3(0.5f, 0.5f, 0.5f);
+	dir_light_data.specular = glm::vec3(0.5f, 0.5f, 0.5f);
+	dir_light_data.direction = glm::vec3(-0.2f, -1.0f, -0.3f);
+	create_directional_light(dir_light_data, entities_controller, light_components);
+}
+
+void SceneController::create_directional_light(DirectionalLightData& dir_light_data, EntitiesController& entities_controller, ComponentSet<LightComponent>& light_components)
+{
+	int light = entities_controller.get_new_id();
+	directional_light = light;
+
+	LightComponent& light_component = light_components[light];
+	light_component.ambient = dir_light_data.ambient;
+	light_component.diffuse = dir_light_data.diffuse;
+	light_component.direction = dir_light_data.direction;
+	light_component.specular = dir_light_data.specular;
 }
 
 void SceneController::create_tower(
@@ -26,20 +49,6 @@ void SceneController::create_tower(
 	RenderComponent& render = render_components[tower];
 	ModelManager model_manager;	
 	model_manager.load_model_to_render_component(tower_data.mesh_file_path, render);
-	
-	render.mesh_internal_data = model_manager.get_mesh();
-	render.mesh_internal_data.set_up_buffers();
-	const auto& textures = render.mesh_internal_data.get_textures();
-	auto it = std::find_if(textures.begin(), textures.end(), [](const Texture& texture) {
-		return texture.type == Texture::Type::DIFFUSE;
-	});
-	if (it != textures.end()) {
-		render.material = (*it).id;
-	}
-	else {
-		std::cout << "No diffuse texture found." << std::endl;
-	}
-	render.mesh = render.mesh_internal_data.get_VAO();
 }
 
 void SceneController::create_camera(CameraData& camera_data, EntitiesController& entities_controller, ComponentSet<TransformComponent>& transform_components, CameraComponent& camera_component)

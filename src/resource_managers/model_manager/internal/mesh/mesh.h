@@ -15,6 +15,8 @@ public:
         this->vertices = vertices;
         this->indices = indices;
         this->textures = textures;
+        
+        set_up_buffers();
     }
 
     std::vector<Vertex>& get_vertices() { return vertices; }
@@ -30,7 +32,7 @@ public:
         return VAO; 
     }
 
-    bool set_up_buffers();
+    
 
 private:
     bool buffers_set = false;
@@ -38,4 +40,6 @@ private:
     std::vector<Vertex> vertices;
     std::vector<uint> indices;
     std::vector<Texture> textures;
+
+    void set_up_buffers();
 };

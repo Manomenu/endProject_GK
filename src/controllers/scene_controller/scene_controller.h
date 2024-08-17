@@ -10,6 +10,8 @@
 #include <render_component.h>
 #include <model_manager/model_manager.h>
 #include <camera_component.h>
+#include <light_component.h>
+#include <entities_data/directional_light_data.h>
 
 struct SceneController
 {
@@ -18,6 +20,7 @@ public:
 		EntitiesController& entities_controller,
 		ComponentSet<TransformComponent>& transform_components,
 		ComponentSet<RenderComponent>& render_components,
+		ComponentSet<LightComponent>& light_components,
 		CameraComponent& camera_component
 	);
 	void create_tower(
@@ -36,12 +39,15 @@ public:
 		EntitiesController& entities_controller,
 		ComponentSet<TransformComponent>& transform_components,
 		ComponentSet<RenderComponent>& render_components);
+	void create_directional_light(DirectionalLightData& dir_light_data, EntitiesController& entities_controller, ComponentSet<LightComponent>& light_components);
 
 	uint get_towers_count() { return towers.size(); }
 	uint get_camera() { return camera; }
+	uint get_directional_light() { return directional_light; }
 
 private:
 	std::vector<uint> towers;
 	std::vector<uint> cubes;
 	uint camera;
+	uint directional_light;
 };

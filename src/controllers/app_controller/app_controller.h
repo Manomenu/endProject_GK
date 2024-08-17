@@ -11,7 +11,7 @@
 #include <entities_controller/entities_controller.h>
 #include <scene_controller/scene_controller.h>
 #include <config.h>
-
+#include <systems/light_system/light_system.h>
 
 struct AppController_Configuration
 {
@@ -38,8 +38,10 @@ private:
 
 	RenderSystem render_system;
 	CameraSystem camera_system;
+	LightSystem light_system;
 
 	ComponentSet<TransformComponent> transform_components;
 	ComponentSet<RenderComponent> render_components;
+	ComponentSet<LightComponent> light_components;
 	CameraComponent camera_component;
 };
