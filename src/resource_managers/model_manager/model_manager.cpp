@@ -56,12 +56,14 @@ void ModelManager::process_mesh(aiMesh* mesh, const aiScene* scene, RenderCompon
             mesh->mNormals[i].y,
             mesh->mNormals[i].z
         };
-        vertex.texture_coords =
-        {
-            mesh->mTextureCoords[0][i].x,
-            mesh->mTextureCoords[0][i].y
-        };
-        vertices.push_back(vertex);
+        
+        if (mesh->mTextureCoords[0] != nullptr)
+            vertex.texture_coords =
+            {
+                mesh->mTextureCoords[0][i].x,
+                mesh->mTextureCoords[0][i].y
+            };
+            vertices.push_back(vertex);
     }
 
     for (uint i = 0; i < mesh->mNumFaces; ++i)
@@ -70,26 +72,38 @@ void ModelManager::process_mesh(aiMesh* mesh, const aiScene* scene, RenderCompon
         for (uint j = 0; j < face.mNumIndices; ++j)
             indices.push_back(face.mIndices[j]);
     }
-    
+
     if (mesh->mMaterialIndex >= 0)
     {
         aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 
-        std::vector<Texture> diffuse_textures = 
-            load_material_textures(material, aiTextureType_DIFFUSE, Texture::Type::DIFFUSE);
+        std::vector<Texture> diffuse_textures =
+            load_textures(scene, material, aiTextureType_DIFFUSE, Texture::Type::DIFFUSE);
         textures.insert(textures.end(), diffuse_textures.begin(), diffuse_textures.end());
         if (diffuse_textures.size() > 0)
             render_part.diffuse_id = diffuse_textures.back().id;
         else
-            render_part.diffuse_id = 0;
+        {
+            aiColor3D color;
+            material->Get(AI_MATKEY_COLOR_DIFFUSE, color);
 
-        std::vector<Texture> specular_textures = 
-            load_material_textures(material, aiTextureType_SPECULAR, Texture::Type::SPECULAR);
+            if (color.r + color.g + color.b > 0)
+                render_part.diffuse = glm::vec3(color.r, color.g, color.b);
+        }
+
+        std::vector<Texture> specular_textures =
+            load_textures(scene, material, aiTextureType_SPECULAR, Texture::Type::SPECULAR);
         textures.insert(textures.end(), specular_textures.begin(), specular_textures.end());
         if (specular_textures.size() > 0)
             render_part.specular_id = specular_textures.back().id;
         else
-            render_part.specular_id = 0;
+        {
+            aiColor3D color;
+            material->Get(AI_MATKEY_COLOR_SPECULAR, color);
+
+            if (color.r + color.g + color.b > 0)
+                render_part.specular = glm::vec3(color.r, color.g, color.b);
+        }
     }
 
     Mesh _mesh;
@@ -99,9 +113,10 @@ void ModelManager::process_mesh(aiMesh* mesh, const aiScene* scene, RenderCompon
     render_part.indices_size = _mesh.get_indices().size();
 }
 
-std::vector<Texture> ModelManager::load_material_textures(aiMaterial* mat, aiTextureType type, Texture::Type texture_type)
+std::vector<Texture> ModelManager::load_textures(const aiScene* scene, aiMaterial* mat, aiTextureType type, Texture::Type texture_type)
 {
     std::vector<Texture> textures;
+
     for (uint i = 0; i < mat->GetTextureCount(type); ++i)
     {
         aiString str;
@@ -119,12 +134,13 @@ std::vector<Texture> ModelManager::load_material_textures(aiMaterial* mat, aiTex
         if (!skip)
         {
             Texture texture;
-            texture.id = texture_management::texture_from_file(std::string(str.C_Str()), directory);
+            texture.id = str.C_Str()[0] == '*' ? texture_management::texture_from_embedded(scene->mTextures[0]) : texture_management::texture_from_file(std::string(str.C_Str()), directory);
             texture.type = texture_type;
             texture.file_path = str.C_Str();
             textures.push_back(texture);
             textures_loaded.push_back(texture); // add to loaded textures
         }
     }
+    
     return textures;
 }

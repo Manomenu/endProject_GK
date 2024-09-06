@@ -22,7 +22,7 @@ void Mesh::set_up_buffers()
 	glEnableVertexArrayAttrib(VAO, 2);
 	glVertexArrayAttribFormat(VAO, 2, 2, GL_FLOAT, GL_FALSE, offsetof(Vertex, texture_coords));
 	glVertexArrayAttribBinding(VAO, 2, 0); // Attribute 2 uses binding point 0
-	
+
 	glCreateBuffers(1, &EBO);
 	glNamedBufferData(EBO, sizeof(uint) * indices.size(), indices.data(), GL_STATIC_DRAW);
 	glVertexArrayElementBuffer(VAO, EBO);

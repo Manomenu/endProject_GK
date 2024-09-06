@@ -5,7 +5,7 @@ void RenderSystem::initialize(ShaderManager& shader_manager)
 	shader_manager.use();
 
 	glm::mat4 projection = glm::perspective(
-		45.0f, 640.0f / 480.0f, 0.1f, 10.0f); // todo move to config
+		45.0f, 640.0f / 480.0f, 0.02f, 10.0f); // todo move to config
 	shader_manager.set_mat4("projection", projection);
 }
 
@@ -32,16 +32,22 @@ void RenderSystem::update(
 
 		for each (const RenderComponent::RenderPart& render_part in render_component.parts)
 		{
-			glActiveTexture(GL_TEXTURE0);
-			shader_manager.set_uniform("material.diffuse", 0);
-			glBindTexture(GL_TEXTURE_2D, render_part.diffuse_id);
-			
-			glActiveTexture(GL_TEXTURE1);
-			shader_manager.set_uniform("material.specular", 1);
-			glBindTexture(GL_TEXTURE_2D, render_part.specular_id);
+			if (render_part.diffuse.x != -1)
+			{
+				glActiveTexture(GL_TEXTURE0);
+				shader_manager.set_uniform("material.diffuse", 0);
+				glBindTexture(GL_TEXTURE_2D, render_part.diffuse_id);
 
-			glBindVertexArray(render_part.mesh_id);
-			glDrawElements(GL_TRIANGLES, render_part.indices_size, GL_UNSIGNED_INT, 0); 
+				glActiveTexture(GL_TEXTURE1);
+				shader_manager.set_uniform("material.specular", 1);
+				glBindTexture(GL_TEXTURE_2D, render_part.specular_id);
+
+				glBindVertexArray(render_part.mesh_id);
+				glDrawElements(GL_TRIANGLES, render_part.indices_size, GL_UNSIGNED_INT, 0);
+			}
+			
+			shader_manager.set_vec3("material.color_diffuse", render_part.diffuse);
+			shader_manager.set_vec3("material.color_specular", render_part.specular);
 		}		
 	}
 }
@@ -49,10 +55,18 @@ void RenderSystem::update(
 void RenderSystem::set_model(ShaderManager& shader_manager, TransformComponent& transform)
 {
 	glm::mat4 model = glm::mat4(1.0f);
+	
 	model = glm::translate(model, transform.position);
 	model = glm::rotate(
 		model, glm::radians(transform.eulers.z),
 		{ 0.0f, 0.0f, 1.0f });
+	model = glm::rotate(
+		model, glm::radians(transform.eulers.y),
+		{ 0.0f, 1.0f, 0.0f });
+	model = glm::rotate(
+		model, glm::radians(transform.eulers.x),
+		{ 1.0f, 0.0f, 0.0f });
+	model = glm::scale(model, transform.scale);
 
 	shader_manager.set_mat4("model", model);
 }

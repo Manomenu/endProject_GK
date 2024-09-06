@@ -9,7 +9,7 @@ public:
     void initialize(
         std::vector<Vertex> vertices,
         std::vector<uint> indices,
-        std::vector<Texture> textures
+        std::vector<Texture> textures = std::vector<Texture>()
     ) 
     {
         this->vertices = vertices;

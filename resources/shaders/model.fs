@@ -3,7 +3,10 @@ out vec4 FragColor;
 
 struct Material {
     sampler2D diffuse;
+    vec3 color_diffuse;
+
     sampler2D specular;
+    vec3 color_specular;
     //float shininess;
 }; 
 
@@ -46,9 +49,9 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir)
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32); // material.shininess
     // combine results
-    vec3 ambient = light.ambient * vec3(texture(material.diffuse, TexCoords));
-    vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords));
-    vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
+    vec3 ambient = light.ambient * (material.color_diffuse.x != -1 ? material.color_diffuse : vec3(texture(material.diffuse, TexCoords)));
+    vec3 diffuse = light.diffuse * diff * (material.color_diffuse.x != -1 ? material.color_diffuse : vec3(texture(material.diffuse, TexCoords)));
+    vec3 specular = light.specular * spec * (material.color_specular.x != -1 ? material.color_specular : vec3(texture(material.diffuse, TexCoords)));
     return (ambient + diffuse + specular);
 }
 

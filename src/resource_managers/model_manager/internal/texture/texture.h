@@ -17,6 +17,7 @@ struct Texture
 namespace texture_management
 {
     uint texture_from_file(const std::string& path, const std::string& directory);
+    uint texture_from_embedded(const aiTexture* aiTex);
 }
 
 

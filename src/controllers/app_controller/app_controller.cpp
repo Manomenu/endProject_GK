@@ -61,7 +61,7 @@ void AppController::initialize(const AppController_Configuration &configuration)
 #pragma region systems_and_managers_and_controllers_setup
 	// todo swithc to managers except app_controller!
 	platform_controller.initialize(window);
-	scene_controller.initialize(entities_controller, transform_components, render_components, light_components, camera_component);
+	scene_controller.initialize(entities_controller, transform_components, render_components, light_components, motion_components, camera_component);
 	shader_manager.initialize(SHADERS_PATH "model.vs", SHADERS_PATH "model.fs");
 	shader_manager.use();
 	render_system.initialize(shader_manager);
@@ -91,6 +91,7 @@ void AppController::run()
 		//systems
 		bool should_close = camera_system.update(platform_controller, transform_components, scene_controller.get_camera(), camera_component, deltaTime);
 		if (should_close) glfwSetWindowShouldClose(window, true);
+		motion_system.update(scene_controller, transform_components, motion_components, deltaTime);
 		light_system.update(shader_manager, scene_controller.get_directional_light(), light_components);
 		render_system.update(shader_manager, platform_controller, scene_controller, transform_components, render_components);
 
