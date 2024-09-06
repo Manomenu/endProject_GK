@@ -12,4 +12,7 @@ enum Camera_Movement {
 struct CameraData
 {
 	glm::vec3 position = glm::vec3(0);
+
+    bool followsEntity = false;
+    uint followedEntity;
 };

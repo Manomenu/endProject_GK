@@ -25,7 +25,7 @@ public:
 		ComponentSet<RenderComponent>& render_components,
 		ComponentSet<LightComponent>& light_components,
 		ComponentSet<MotionComponent>& motion_components,
-		CameraComponent& camera_component
+		ComponentSet<CameraComponent>& camera_components
 	);
 	void create_tower(
 		TowerData& tower_data,
@@ -50,7 +50,8 @@ public:
 		CameraData& camera_data,
 		EntitiesController& entities_controller,
 		ComponentSet<TransformComponent>& transform_components,
-		CameraComponent& camera_component
+		ComponentSet<CameraComponent>& camera_components,
+		ComponentSet<MotionComponent>& motion_component
 	);
 	void create_cube(CubeData& cube_data,
 		EntitiesController& entities_controller,
@@ -59,7 +60,8 @@ public:
 	void create_directional_light(DirectionalLightData& dir_light_data, EntitiesController& entities_controller, ComponentSet<LightComponent>& light_components);
 
 	uint get_towers_count() { return towers.size(); }
-	uint get_camera() { return camera; }
+	uint get_free_camera() { return cameras[0]; }
+	const std::vector<uint>& get_cameras() { return cameras; }
 	const std::vector<uint>& get_cars() { return cars; }
 	uint get_directional_light() { return directional_light; }
 
@@ -68,6 +70,6 @@ private:
 	std::vector<uint> towers;
 	std::vector<uint> roads;
 	std::vector<uint> cubes;
-	uint camera;
+	std::vector<uint> cameras; // 0 - free, 1 - behind car, 2 - static
 	uint directional_light;
 };

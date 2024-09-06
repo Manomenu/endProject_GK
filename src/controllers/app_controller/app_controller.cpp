@@ -61,11 +61,11 @@ void AppController::initialize(const AppController_Configuration &configuration)
 #pragma region systems_and_managers_and_controllers_setup
 	// todo swithc to managers except app_controller!
 	platform_controller.initialize(window);
-	scene_controller.initialize(entities_controller, transform_components, render_components, light_components, motion_components, camera_component);
+	scene_controller.initialize(entities_controller, transform_components, render_components, light_components, motion_components, camera_components);
 	shader_manager.initialize(SHADERS_PATH "model.vs", SHADERS_PATH "model.fs");
 	shader_manager.use();
 	render_system.initialize(shader_manager);
-	camera_system.initialize(shader_manager);
+	camera_system.initialize(shader_manager, scene_controller.get_cameras());
 #pragma endregion
 }
 
@@ -89,7 +89,7 @@ void AppController::run()
 	#pragma endregion
 
 		//systems
-		bool should_close = camera_system.update(platform_controller, transform_components, scene_controller.get_camera(), camera_component, deltaTime);
+		bool should_close = camera_system.update(platform_controller, transform_components, scene_controller.get_cameras(), camera_components, deltaTime);
 		if (should_close) glfwSetWindowShouldClose(window, true);
 		motion_system.update(scene_controller, transform_components, motion_components, deltaTime);
 		light_system.update(shader_manager, scene_controller.get_directional_light(), light_components);
@@ -99,11 +99,13 @@ void AppController::run()
 		#if REMOVE_IMGUI == 0
 		GuiData gui_data;
 		gui_data.scene.towers_count = scene_controller.get_towers_count();
-		gui_data.camera.pitch = camera_component.pitch;
-		gui_data.camera.yaw = camera_component.yaw;
-		gui_data.camera.position = transform_components[scene_controller.get_camera()].position;
+		gui_data.camera.pitch = camera_components[camera_system.get_current_camera()].pitch;
+		gui_data.camera.yaw = camera_components[camera_system.get_current_camera()].yaw;
+		gui_data.camera.position = transform_components[camera_system.get_current_camera()].position;
+		gui_data.camera.current_camera = camera_system.get_camera_array_number(camera_system.get_current_camera(), scene_controller.get_cameras());
 
 		gui_controller.update_data(gui_data);
+		gui_controller.apply_configuration(camera_system);
 		gui_controller.build_gui();
 		#endif
 	#pragma endregion

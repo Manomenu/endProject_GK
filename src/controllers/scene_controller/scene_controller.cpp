@@ -5,7 +5,7 @@ void SceneController::initialize(EntitiesController& entities_controller,
 	ComponentSet<RenderComponent>& render_components,
 	ComponentSet<LightComponent>& light_components,
 	ComponentSet<MotionComponent>& motion_components,
-	CameraComponent& camera_component
+	ComponentSet<CameraComponent>& camera_components
 )
 {
 	TowerData tower_data;
@@ -35,7 +35,13 @@ void SceneController::initialize(EntitiesController& entities_controller,
 	
 	CameraData camera_data;
 	camera_data.position = glm::vec3(3, -0.03f, 3.3);
-	create_camera(camera_data, entities_controller, transform_components, camera_component);
+	create_camera(camera_data, entities_controller, transform_components, camera_components, motion_components);
+	camera_data.followsEntity = true;
+	camera_data.followedEntity = cars[0];
+	create_camera(camera_data, entities_controller, transform_components, camera_components, motion_components);
+	camera_data.followsEntity = false;
+	camera_data.followedEntity = 0;
+	create_camera(camera_data, entities_controller, transform_components, camera_components, motion_components);
 
 	DirectionalLightData dir_light_data;
 	dir_light_data.ambient = glm::vec3(0.09f, 0.09f, 0.09f);
@@ -117,17 +123,42 @@ void SceneController::create_road(RoadData& road_data, EntitiesController& entit
 	model_manager.load_model_to_render_component(road_data.mesh_file_path, render);
 }
 
-void SceneController::create_camera(CameraData& camera_data, EntitiesController& entities_controller, ComponentSet<TransformComponent>& transform_components, CameraComponent& camera_component)
+void SceneController::create_camera(
+	CameraData& camera_data, 
+	EntitiesController& entities_controller, 
+	ComponentSet<TransformComponent>& transform_components, 
+	ComponentSet<CameraComponent>& camera_components, 
+	ComponentSet<MotionComponent>& motion_components)
 {
-	camera = entities_controller.get_new_id();
+	uint camera = entities_controller.get_new_id();
+	cameras.push_back(camera);
 
 	TransformComponent& transform = transform_components[camera];
 	transform.position = camera_data.position;
 
+	CameraComponent& camera_component = camera_components[camera];
 	camera_component.forwards = { 0, 0, -1 };
 	camera_component.right = { -1, 0, 0 };
 	camera_component.up = { 0, 1, 0 };
 	camera_component.movement_speed = 0.1f;
+	camera_component.yaw = 0;
+
+	if (camera_data.followsEntity)
+	{
+		camera_component.followsEntity = true;
+		camera_component.followedEntity = camera_data.followedEntity;
+
+		MotionComponent& motion = motion_components[camera];
+		MotionComponent& followed_entity_motion = motion_components[camera_data.followedEntity];
+
+		if (followed_entity_motion.circular_move)
+		{
+			motion.circle_center = followed_entity_motion.circle_center;
+			motion.circle_center.y + 0.04;
+			motion.circle_radius = followed_entity_motion.circle_radius;
+			motion.circular_move = true;
+		}
+	}
 }
 
 void SceneController::create_cube(CubeData& cube_data, EntitiesController& entities_controller, 

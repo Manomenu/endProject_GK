@@ -1,7 +1,11 @@
 #include "camera_system.h"
 
-void CameraSystem::initialize(ShaderManager& shader_manager) {
+void CameraSystem::initialize(ShaderManager& shader_manager, const std::vector< uint>& cameras) {
 
+    freeCamera = cameras[0];
+    followingCamera = cameras[1];
+    staticCamera = cameras[2];
+    currentCamera = cameras[0];
     shader_manager.use();
     viewLocation = shader_manager.get_view_location();
     viewPosLocation = shader_manager.get_uniform_location("viewPos");
@@ -58,9 +62,10 @@ void CameraSystem::process_zoom(CameraComponent& camera_component, float offset_
 }
 
 bool CameraSystem::update(
-    PlatformController& platform_controller,
-    ComponentSet<TransformComponent>& transform_components,
-    uint camera, CameraComponent& camera_component, 
+    PlatformController& platform_controller, 
+    ComponentSet<TransformComponent>& transform_components, 
+    const std::vector<uint>& cameras, 
+    ComponentSet<CameraComponent>& camera_components,
     float delta_time
 ) 
 {
@@ -69,55 +74,86 @@ bool CameraSystem::update(
         return true;
     }
 
-    //Position
+    uint camera = currentCamera;
+
+    CameraComponent& camera_component = camera_components[camera];
     TransformComponent& transform = transform_components[camera];
-    
-    if (platform_controller.is_pressed(Buttons::W))
-        process_position(transform, camera_component, FORWARD, delta_time);
-    if (platform_controller.is_pressed(Buttons::S))
-        process_position(transform, camera_component, BACKWARD, delta_time);
-    if (platform_controller.is_pressed(Buttons::A))
-        process_position(transform, camera_component, LEFT, delta_time);
-    if (platform_controller.is_pressed(Buttons::D))
-        process_position(transform, camera_component, RIGHT, delta_time);
 
-    //Rotation
-    if (!platform_controller.is_pressed(Buttons::L_CTRL))
+    if (camera == freeCamera)
     {
-        left_rotation_mode = true;
-        if (entered_rotation_mode)
-        {
-            entered_rotation_mode = false;
-            platform_controller.set_mouse_input_mode(InputMode::LockedMouse);
-        }
-
-        glm::vec2 cursor_position = platform_controller.get_cursor_position();
+        //Position
         
 
-        if (first_rotation)
+        if (platform_controller.is_pressed(Buttons::W))
+            process_position(transform, camera_component, FORWARD, delta_time);
+        if (platform_controller.is_pressed(Buttons::S))
+            process_position(transform, camera_component, BACKWARD, delta_time);
+        if (platform_controller.is_pressed(Buttons::A))
+            process_position(transform, camera_component, LEFT, delta_time);
+        if (platform_controller.is_pressed(Buttons::D))
+            process_position(transform, camera_component, RIGHT, delta_time);
+
+        //Rotation
+        if (!platform_controller.is_pressed(Buttons::L_CTRL))
         {
+            left_rotation_mode = true;
+            if (entered_rotation_mode)
+            {
+                entered_rotation_mode = false;
+                platform_controller.set_mouse_input_mode(InputMode::LockedMouse);
+            }
+
+            glm::vec2 cursor_position = platform_controller.get_cursor_position();
+
+
+            if (first_rotation)
+            {
+                last_x = cursor_position.x;
+                last_y = cursor_position.y;
+                first_rotation = false;
+            }
+            float offset_x = cursor_position.x - last_x;
+            float offset_y = last_y - cursor_position.y;
             last_x = cursor_position.x;
             last_y = cursor_position.y;
-            first_rotation = false;
+            // todo camera does not work!
+
+            process_rotation(transform, camera_component, offset_x, offset_y);
+
+            //platform_controller.center_cursor();
         }
-        float offset_x = cursor_position.x - last_x;
-        float offset_y = last_y - cursor_position.y;
-        last_x = cursor_position.x;
-        last_y = cursor_position.y;
-        // todo camera does not work!
-
-        process_rotation(transform, camera_component, offset_x, offset_y);
-
-        //platform_controller.center_cursor();
-    }
-    else
-    {
-        entered_rotation_mode = true;
-        if (left_rotation_mode)
+        else
         {
-            left_rotation_mode = false;
-            platform_controller.set_mouse_input_mode(InputMode::FreeMouse);
+            entered_rotation_mode = true;
+            if (left_rotation_mode)
+            {
+                left_rotation_mode = false;
+                platform_controller.set_mouse_input_mode(InputMode::FreeMouse);
+            }
         }
+    }
+    else if (currentCamera == staticCamera || currentCamera == followingCamera)
+    {
+        if (!platform_controller.is_pressed(Buttons::L_CTRL))
+        {
+            left_rotation_mode = true;
+            if (entered_rotation_mode)
+            {
+                entered_rotation_mode = false;
+                platform_controller.set_mouse_input_mode(InputMode::LockedMouse);
+            }
+        }
+        else
+        {
+            entered_rotation_mode = true;
+            if (left_rotation_mode)
+            {
+                left_rotation_mode = false;
+                platform_controller.set_mouse_input_mode(InputMode::FreeMouse);
+            }
+        }
+
+        update_camera_vectors(camera_component);
     }
 
     glm::mat4 view = get_view_matrix(camera_component, transform);

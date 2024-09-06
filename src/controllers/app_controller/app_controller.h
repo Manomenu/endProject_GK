@@ -46,5 +46,5 @@ private:
 	ComponentSet<RenderComponent> render_components;
 	ComponentSet<LightComponent> light_components;
 	ComponentSet<MotionComponent> motion_components;
-	CameraComponent camera_component;
+	ComponentSet< CameraComponent> camera_components;
 };
