@@ -94,7 +94,7 @@ bool CameraSystem::update(
             process_position(transform, camera_component, RIGHT, delta_time);
 
         //Rotation
-        if (!platform_controller.is_pressed(Buttons::L_CTRL))
+        if (!platform_controller.is_pressed(Buttons::L_ALT))
         {
             left_rotation_mode = true;
             if (entered_rotation_mode)
@@ -134,7 +134,7 @@ bool CameraSystem::update(
     }
     else if (currentCamera == staticCamera || currentCamera == followingCamera)
     {
-        if (!platform_controller.is_pressed(Buttons::L_CTRL))
+        if (!platform_controller.is_pressed(Buttons::L_ALT))
         {
             left_rotation_mode = true;
             if (entered_rotation_mode)
@@ -166,18 +166,23 @@ bool CameraSystem::update(
 
 void CameraSystem::update_camera_vectors(CameraComponent& camera_component)
 {
-    float yaw = camera_component.yaw;
     float pitch = camera_component.pitch;
+    float yaw = camera_component.yaw;
+    float roll = 0;
 
-    // calculate the new Front vector
+    if (pitch >= 90 && pitch <= 270)
+    {
+        roll = 180;
+    }
+
     glm::vec3 front;
     front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
     front.y = sin(glm::radians(pitch));
     front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
     camera_component.forwards = glm::normalize(front);
-    // also re-calculate the Right and Up vector
-    camera_component.right = glm::normalize(
-        glm::cross(camera_component.forwards, camera_component.world_up)
-    );  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
-    camera_component.up = glm::normalize(glm::cross(camera_component.right, camera_component.forwards));
+    glm::vec3 right = glm::normalize(glm::cross(camera_component.forwards, camera_component.world_up));
+    glm::vec3 up = glm::normalize(glm::cross(right, camera_component.forwards));
+    glm::mat4 rollMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(roll), camera_component.forwards);
+    camera_component.right = glm::normalize(glm::vec3(rollMatrix * glm::vec4(right, 0.0f)));
+    camera_component.up = glm::normalize(glm::vec3(rollMatrix * glm::vec4(up, 0.0f)));
 }

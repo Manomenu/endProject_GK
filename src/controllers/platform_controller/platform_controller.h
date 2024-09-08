@@ -16,7 +16,7 @@ enum class Buttons
 	S = 83,
 	W = 87,
 	ESC = 256,
-	L_CTRL = 341
+	L_ALT = 342
 };
 
 struct PlatformController

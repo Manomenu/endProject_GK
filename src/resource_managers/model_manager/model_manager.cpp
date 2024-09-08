@@ -1,5 +1,81 @@
 #include "model_manager.h"
 
+void ModelManager::load_bulb_to_render_component(RenderComponent& render_component, glm::vec3 color)
+{
+    render_component.parts.resize(render_component.parts.size() + 1);
+    RenderComponent::RenderPart& part = render_component.parts[0];
+
+    Mesh mesh;
+    std::vector<Vertex> vertices = {
+        // Front Face
+        {{-1.0f, -1.0f,  1.0f}, {0.0f, 0.0f, 1.0f}}, // 0
+        {{ 1.0f, -1.0f,  1.0f}, {0.0f, 0.0f, 1.0f}}, // 1
+        {{ 1.0f,  1.0f,  1.0f}, {0.0f, 0.0f, 1.0f}}, // 2
+        {{-1.0f,  1.0f,  1.0f}, {0.0f, 0.0f, 1.0f}}, // 3
+
+        // Back Face
+        {{-1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}}, // 4
+        {{ 1.0f, -1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}}, // 5
+        {{ 1.0f,  1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}}, // 6
+        {{-1.0f,  1.0f, -1.0f}, {0.0f, 0.0f, -1.0f}}, // 7
+
+        // Left Face
+        {{-1.0f, -1.0f, -1.0f}, {-1.0f, 0.0f, 0.0f}}, // 8
+        {{-1.0f, -1.0f,  1.0f}, {-1.0f, 0.0f, 0.0f}}, // 9
+        {{-1.0f,  1.0f,  1.0f}, {-1.0f, 0.0f, 0.0f}}, // 10
+        {{-1.0f,  1.0f, -1.0f}, {-1.0f, 0.0f, 0.0f}}, // 11
+
+        // Right Face
+        {{ 1.0f, -1.0f, -1.0f}, {1.0f, 0.0f, 0.0f}}, // 12
+        {{ 1.0f, -1.0f,  1.0f}, {1.0f, 0.0f, 0.0f}}, // 13
+        {{ 1.0f,  1.0f,  1.0f}, {1.0f, 0.0f, 0.0f}}, // 14
+        {{ 1.0f,  1.0f, -1.0f}, {1.0f, 0.0f, 0.0f}}, // 15
+
+        // Top Face
+        {{-1.0f,  1.0f,  1.0f}, {0.0f, 1.0f, 0.0f}}, // 16
+        {{ 1.0f,  1.0f,  1.0f}, {0.0f, 1.0f, 0.0f}}, // 17
+        {{ 1.0f,  1.0f, -1.0f}, {0.0f, 1.0f, 0.0f}}, // 18
+        {{-1.0f,  1.0f, -1.0f}, {0.0f, 1.0f, 0.0f}}, // 19
+
+        // Bottom Face
+        {{-1.0f, -1.0f,  1.0f}, {0.0f, -1.0f, 0.0f}}, // 20
+        {{ 1.0f, -1.0f,  1.0f}, {0.0f, -1.0f, 0.0f}}, // 21
+        {{ 1.0f, -1.0f, -1.0f}, {0.0f, -1.0f, 0.0f}}, // 22
+        {{-1.0f, -1.0f, -1.0f}, {0.0f, -1.0f, 0.0f}}, // 23
+    };
+    std::vector<uint> indices = {
+        // Front Face
+        0, 1, 2,
+        2, 3, 0,
+
+        // Back Face
+        4, 5, 6,
+        6, 7, 4,
+
+        // Left Face
+        8, 9, 10,
+        10, 11, 8,
+
+        // Right Face
+        12, 13, 14,
+        14, 15, 12,
+
+        // Top Face
+        16, 17, 18,
+        18, 19, 16,
+
+        // Bottom Face
+        20, 21, 22,
+        22, 23, 20
+    };
+    mesh.initialize(vertices, indices);
+
+    part.diffuse = color;
+    part.specular = glm::vec3(color.x * 0.1, color.y * 0.1, color.z * 0.1);
+    part.mesh_id = mesh.get_VAO();
+    part.indices_size = mesh.get_indices().size();
+}
+
 void ModelManager::load_model_to_render_component(const std::string& file_path, RenderComponent& render_component)
 {
     Assimp::Importer importer;

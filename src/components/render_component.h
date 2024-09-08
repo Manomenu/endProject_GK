@@ -12,7 +12,7 @@ struct RenderComponent
 		uint diffuse_id = 0;
 		// or
 		glm::vec3 diffuse = { -1.0f,-1.0f,-1.0f };
-		glm::vec3 specular = { -1.0f,-1.0f,-1.0f };;
+		glm::vec3 specular = { -1.0f,-1.0f,-1.0f };
 	};
 	
 	std::vector<RenderPart> parts;

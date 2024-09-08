@@ -91,13 +91,17 @@ void AppController::run()
 		//systems
 		bool should_close = camera_system.update(platform_controller, transform_components, scene_controller.get_cameras(), camera_components, deltaTime);
 		if (should_close) glfwSetWindowShouldClose(window, true);
-		motion_system.update(scene_controller, transform_components, motion_components, deltaTime);
-		light_system.update(shader_manager, scene_controller.get_directional_light(), light_components);
+		motion_system.update(scene_controller, transform_components, motion_components, camera_components, light_components, deltaTime);
+		light_system.update(shader_manager, light_components, transform_components);
 		render_system.update(shader_manager, platform_controller, scene_controller, transform_components, render_components);
 
 	#pragma region imgui
 		#if REMOVE_IMGUI == 0
 		GuiData gui_data;
+		gui_data.scene.spot_lights_count = scene_controller.get_spot_light_count();
+		gui_data.scene.cameras_count = scene_controller.get_cameras_count();
+		gui_data.scene.roads_count = scene_controller.get_roads_count();
+		gui_data.scene.cars_count = scene_controller.get_cars_count();
 		gui_data.scene.towers_count = scene_controller.get_towers_count();
 		gui_data.camera.pitch = camera_components[camera_system.get_current_camera()].pitch;
 		gui_data.camera.yaw = camera_components[camera_system.get_current_camera()].yaw;
@@ -105,7 +109,7 @@ void AppController::run()
 		gui_data.camera.current_camera = camera_system.get_camera_array_number(camera_system.get_current_camera(), scene_controller.get_cameras());
 
 		gui_controller.update_data(gui_data);
-		gui_controller.apply_configuration(camera_system);
+		gui_controller.apply_configuration(camera_system, scene_controller, light_system, motion_system, light_components);
 		gui_controller.build_gui();
 		#endif
 	#pragma endregion

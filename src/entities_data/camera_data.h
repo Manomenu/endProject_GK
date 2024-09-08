@@ -15,4 +15,5 @@ struct CameraData
 
     bool followsEntity = false;
     uint followedEntity;
+    float yaw = -90;
 };

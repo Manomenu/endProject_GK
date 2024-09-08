@@ -9,6 +9,7 @@ struct ModelManager
 {
 public:
     void load_model_to_render_component(const std::string& file_path, RenderComponent& render_component);
+    void load_bulb_to_render_component(RenderComponent& render_component, glm::vec3 color);
 
 private:
     std::vector<Texture> textures_loaded;

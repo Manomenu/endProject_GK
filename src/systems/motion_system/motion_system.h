@@ -9,6 +9,12 @@ public:
         SceneController& scene_controller, 
         ComponentSet<TransformComponent>& transform_components, 
         ComponentSet<MotionComponent>& motion_components,
+        ComponentSet<CameraComponent>& camera_components,
+        ComponentSet<LightComponent>& light_components,
         float delta_time
     );
+    void change_running(bool should_run) { running = should_run; }
+
+private:
+    bool running = true;
 };

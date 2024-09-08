@@ -6,4 +6,9 @@ struct MotionComponent
 	bool circular_move = false;
 	glm::vec3 circle_center;
 	float circle_radius;
+
+    struct
+    {
+        float time = 0;
+    } offset;
 };
