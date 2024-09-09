@@ -51,6 +51,9 @@ void GuiController::build_gui()
 			ImGui::Text("Switch tabs:");
 			ImGui::SameLine(labelWidth);
 			ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Click tab names");
+			ImGui::Text("Exit:");
+			ImGui::SameLine(labelWidth);
+			ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Click [ESC]");
 
 			ImGui::EndTabItem();
 		}
