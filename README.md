@@ -28,7 +28,6 @@ I don't try to optimize things until it's necessary.
 I avoid abstractions and templates unless they will finally seems applicable in previously implemented code.
 
 At the very begining I want to implement simple solutions, and later switch to more robust solution in an iterative manner.
-For example I will later try to switch from basic renderer to ray casting rendering.
 
 ---
 
