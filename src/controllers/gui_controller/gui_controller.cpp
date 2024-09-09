@@ -33,6 +33,8 @@ void GuiController::build_gui()
 {
 	float labelWidth = 170.0f;
 
+	ImGui::SetNextWindowSize(ImVec2(0, 0));
+
 	ImGui::Begin("End Project Manager");
 
 	if (ImGui::BeginTabBar("TabBar"))

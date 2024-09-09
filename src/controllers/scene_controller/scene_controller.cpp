@@ -299,16 +299,3 @@ void SceneController::create_camera(
 		}
 	}
 }
-
-void SceneController::create_cube(CubeData& cube_data, EntitiesController& entities_controller, 
-	ComponentSet<TransformComponent>& transform_components, ComponentSet<RenderComponent>& render_components)
-{
-	int cube = entities_controller.get_new_id();
-	cubes.push_back(cube);
-
-	TransformComponent& transform = transform_components[cube];
-	transform.position = cube_data.position;
-	transform.eulers = cube_data.rotation;
-	
-	RenderComponent& render = render_components[cube];
-}

@@ -59,7 +59,7 @@ void AppController::initialize(const AppController_Configuration &configuration)
 #pragma endregion
 
 #pragma region systems_and_managers_and_controllers_setup
-	// todo swithc to managers except app_controller!
+	// todo switch to managers except app_controller!
 	platform_controller.initialize(window);
 	scene_controller.initialize(entities_controller, transform_components, render_components, light_components, motion_components, camera_components);
 	shader_manager.initialize(SHADERS_PATH "model.vs", SHADERS_PATH "model.fs");

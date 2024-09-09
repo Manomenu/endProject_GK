@@ -7,7 +7,6 @@
 #include <car_data.h>
 #include <road_data.h>
 #include <camera_data.h>
-#include <cube_data.h>
 #include <model_manager/model_manager.h>
 #include <render_component.h>
 #include <model_manager/model_manager.h>
@@ -54,11 +53,6 @@ public:
 		ComponentSet<CameraComponent>& camera_components,
 		ComponentSet<MotionComponent>& motion_component
 	);
-	void create_cube(
-		CubeData& cube_data,
-		EntitiesController& entities_controller,
-		ComponentSet<TransformComponent>& transform_components,
-		ComponentSet<RenderComponent>& render_components);
 	void create_directional_light(
 		DirectionalLightData& dir_light_data, 
 		EntitiesController& entities_controller, 

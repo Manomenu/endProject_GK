@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD 17)
 #basically this will change the RESOURCES_PATH to be the local path
 #! ! ! ! ! ! !
 #DELETE THE OUT FOLDER AFTER CHANGING THIS BECAUSE VISUAL STUDIO DOESN'T SEEM TO RECOGNIZE THIS CHANGE AND REBUILD!
-option(PRODUCTION_BUILD "Make this a production build" OFF)
+option(PRODUCTION_BUILD "Make this a production build" ON)
 #DELETE THE OUT FOLDER AFTER CHANGING THIS BECAUSE VISUAL STUDIO DOESN'T SEEM TO RECOGNIZE THIS CHANGE AND REBUILD!
 
 
@@ -43,7 +43,6 @@ add_subdirectory(thirdparty/glfw-3.3.2)			#window oppener
 add_subdirectory(thirdparty/glad)				#opengl loader
 add_subdirectory(thirdparty/stb_image)			#loading immaged
 add_subdirectory(thirdparty/stb_truetype)		#loading ttf files
-add_subdirectory(thirdparty/raudio)				#audio
 add_subdirectory(thirdparty/glm)				#math
 add_subdirectory(thirdparty/imgui-docking)		#ui
 add_subdirectory(thirdparty/assimp)				#object loader
@@ -68,6 +67,13 @@ if(PRODUCTION_BUILD)
 
 	# remove the option to debug asserts.
 	target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC PRODUCTION_BUILD=1) 
+
+	add_custom_command(
+        TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:${CMAKE_PROJECT_NAME}>/resources
+        COMMENT "Copying resources to executable location for production build"
+    )
 
 else()
 	# This is useful to get an ASSETS_PATH in your IDE during development
@@ -105,7 +111,6 @@ target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE
 	glad 
 	stb_image 
 	stb_truetype 
-	raudio 
 	imgui 
 	assimp
 )
