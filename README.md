@@ -38,4 +38,9 @@ For example I will later try to switch from basic renderer to ray casting render
 - Pausable motion
 - Models loaded from files (glb and obj files)
 
+---
+
+## Showcase video
+
+https://github.com/user-attachments/assets/d8245686-6353-4f6a-b6cc-e57a9988a692
 
