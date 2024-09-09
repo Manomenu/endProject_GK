@@ -3,6 +3,8 @@
 ---
 
 ## How to run
+Download project with submodules: git clone --recurse-submodules <repo-url.git>. 
+If it wasn't enough call also: git submodule update --init --recursive and git submodule update --remote --merge. 
 Open Project folder in Visual Studio, open CMakeLists.txt and press Ctrl + S.
 Then select endproject.exe project and compile & run it.
 After creating exe file you can run it from Visual Studio or you can 
