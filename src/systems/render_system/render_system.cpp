@@ -9,6 +9,12 @@ void RenderSystem::initialize(ShaderManager& shader_manager)
 	shader_manager.set_mat4("projection", projection);
 }
 
+void RenderSystem::change_fog(ShaderManager& shader_manager, glm::vec3 color, float intensity)
+{
+	shader_manager.set_vec3("fog.color", color);
+	shader_manager.set_float("fog.intensity", intensity);
+}
+
 void RenderSystem::update(
 	ShaderManager& shader_manager,
 	PlatformController& platform_controller,
@@ -19,6 +25,8 @@ void RenderSystem::update(
 {
 	glm::ivec2 window_size = platform_controller.get_frame_buffer_size();
 	glm::vec3 scene_color = scene_controller.get_scene_color();
+
+	change_fog(shader_manager, scene_color, scene_controller.get_fog_intensity());
 
 	glViewport(0, 0, window_size.x, window_size.y);
 	glClearColor(scene_color.r, scene_color.g, scene_color.b, 1.0f);

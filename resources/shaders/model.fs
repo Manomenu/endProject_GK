@@ -25,6 +25,11 @@ struct Light {
     float quadratic;
 };
 
+struct Fog {
+    vec3 color;
+    float intensity;
+};
+
 #define NR_SPOT_LIGHTS 4
 
 in vec3 FragPos;
@@ -35,10 +40,12 @@ uniform vec3 viewPos;
 uniform Light dirLight;
 uniform Light spotLights[NR_SPOT_LIGHTS];
 uniform Material material;
+uniform Fog fog;
 
 // function prototypes
 vec3 CalcDirLight(Light light, vec3 normal, vec3 viewDir);
 vec3 CalcSpotLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir);
+float CalcFogFactor(vec3 worldPos, vec3 cameraPos, float intensity);
 
 void main()
 {    
@@ -59,8 +66,21 @@ void main()
             result += CalcSpotLight(spotLights[i], norm, FragPos, viewDir);
     }
     
-    FragColor = vec4(result, 1.0);
+    float fogFactor = CalcFogFactor(FragPos, viewPos, fog.intensity);
+
+    FragColor = vec4(mix(fog.color, result, fogFactor), 1.0);
 }
+
+float CalcFogFactor(vec3 worldPos, vec3 cameraPos, float intensity) 
+{
+    if (intensity == 0.0) return 1.0;
+    float gradient = (intensity * intensity - 50.0 * intensity + 60.0);
+    float distance = length(cameraPos - worldPos);
+    float fog = exp(-pow((distance / gradient), 4.0));
+    fog = clamp(fog, 0.0, 1.0);
+    return fog;
+}
+
 
 vec3 CalcSpotLight(Light light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {

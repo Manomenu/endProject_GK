@@ -65,7 +65,7 @@ public:
 		ComponentSet<RenderComponent>& render_components,
 		ComponentSet<MotionComponent>& motion_components);
 	void change_scene_color(int sceneMode) { if (sceneMode == 0) scene_color = { 0.5f, 0.5f, 0.9f }; else scene_color = { 0.0, 0.0, 0.0 }; }
-
+	void change_fog_intensity(float new_intensity) { fog_intensity = new_intensity; }
 
 	int get_towers_count() { return towers.size(); }
 	int get_cars_count() { return cars.size(); }
@@ -73,6 +73,7 @@ public:
 	int get_cameras_count() { return cameras.size(); }
 	int get_spot_light_count() { return spot_lights.size(); }
 	
+	float get_fog_intensity() { return fog_intensity; }
 	glm::vec3 get_scene_color() { return scene_color; }
 	uint get_free_camera() { return cameras[0]; }
 	const std::vector<uint>& get_cameras() { return cameras; }
@@ -91,4 +92,5 @@ private:
 	std::vector<uint> spot_lights_tiltable;
 	uint directional_light;
 	glm::vec3 scene_color;
+	float fog_intensity;
 };

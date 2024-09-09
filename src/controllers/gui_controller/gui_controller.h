@@ -39,6 +39,7 @@ struct GuiConfig
 	{
 		int selectedTimeMode = 0;
 		bool motionEnabled = true;
+		float fogIntensity = 1.203f;
 	} scene;
 
 	struct

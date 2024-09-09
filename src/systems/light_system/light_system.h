@@ -13,6 +13,7 @@ public:
 	);
 	void change_light_mode(int selectedTimeMode, uint light, ComponentSet<LightComponent>& light_components);
 	void change_spot_lights_tilt(glm::vec3 direction_tilt, const std::vector<uint>& spot_lights, ComponentSet<LightComponent>& light_components);
+	
 
 private:
 	void set_directional(ShaderManager& shader_manager, const LightComponent& light_component);

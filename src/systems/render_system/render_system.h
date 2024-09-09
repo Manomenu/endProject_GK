@@ -12,6 +12,7 @@ public:
 		PlatformController& platform_controller, SceneController& scene_controller, 
 		ComponentSet<TransformComponent>& transform_components, ComponentSet<RenderComponent>& render_components
 	);
+	void change_fog(ShaderManager& shader_manager, glm::vec3 color, float intensity);
 
 private:
 	void set_model(ShaderManager& shader_manager, TransformComponent& transform);

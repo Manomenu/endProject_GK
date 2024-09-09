@@ -9,6 +9,7 @@ void GuiController::apply_configuration(CameraSystem& camera_system, SceneContro
 {
 	camera_system.change_camera(config.camera.selectedCameraMode);
 	scene_controller.change_scene_color(config.scene.selectedTimeMode);
+	scene_controller.change_fog_intensity(config.scene.fogIntensity);
 	light_system.change_light_mode(config.scene.selectedTimeMode, scene_controller.get_directional_light(), light_components);
 	light_system.change_spot_lights_tilt(config.light.carLightsTilt, scene_controller.get_spot_lights_titlable(), light_components);
 	motion_system.change_running(config.scene.motionEnabled);
@@ -112,10 +113,27 @@ void GuiController::build_gui()
 			if (ImGui::RadioButton("Off", config.scene.motionEnabled == false)) config.scene.motionEnabled = false;
 			
 			ImGui::SeparatorText("Car Lights Tilt");
-			ImGui::SliderFloat3("", glm::value_ptr(config.light.carLightsTilt), -1.0f, 1.0f);
+			ImGui::SliderFloat3("##CarLightsTiltSliders", glm::value_ptr(config.light.carLightsTilt), -1.0f, 1.0f);
 			if (ImGui::Button("Reset"))
 			{
 				config.light.carLightsTilt = glm::vec3(0.0f, 0.0f, 0.0f);
+			}
+
+			ImGui::SeparatorText("Fog intensity");
+			ImGui::SliderFloat("##FogIntensitySlider", &config.scene.fogIntensity, 0.0f, 1.234f);
+			if (ImGui::Button("Default"))
+			{
+				config.scene.fogIntensity = 1.203f;
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Off##Fog"))
+			{
+				config.scene.fogIntensity = 0.0f;
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Max"))
+			{
+				config.scene.fogIntensity = 1.234f;
 			}
 
 			ImGui::EndTabItem();

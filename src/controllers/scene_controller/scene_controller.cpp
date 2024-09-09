@@ -9,6 +9,7 @@ void SceneController::initialize(EntitiesController& entities_controller,
 )
 {
 	scene_color = { 0.5f, 0.5f, 0.9f };
+	fog_intensity = 1.203f;
 
 	TowerData tower_data;
 	tower_data.position = glm::vec3(3, 0, 2.87);
