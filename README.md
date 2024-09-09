@@ -2,6 +2,15 @@
 
 ---
 
+## How to run
+Open Project folder in Visual Studio, open CMakeLists.txt and press Ctrl + S.
+Then select endproject.exe project and compile & run it.
+After creating exe file you can run it from Visual Studio or you can 
+open endproject.exe file in endProject_GK/out/build/x64-Debug folder.
+By default project is compiled in Release mode.
+
+---
+
 ## Project intentions
 I want to use <b>new</b> keyword only if it actually makes sense. 
 Besides that I've decided to pass structs that have default constructor, and optionally <b>initialize</b> method.
@@ -15,6 +24,8 @@ I avoid abstractions and templates unless they will finally seems applicable in 
 
 At the very begining I want to implement simple solutions, and later switch to more robust solution in an iterative manner.
 For example I will later try to switch from basic renderer to ray casting rendering.
+
+---
 
 ## Description
 3D scene:
