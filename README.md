@@ -30,13 +30,13 @@ For example I will later try to switch from basic renderer to ray casting render
 ## Description
 3D scene:
 - Animated car with tiltable lights
-- Animated Bezier surface
 - 3 different cameras
 - Multiple lights (spot & directional lights)
 - City scene
 - Day / Night mode
 - Pausable motion
 - Models loaded from files (glb and obj files)
+- Customizable fog
 
 ---
 
