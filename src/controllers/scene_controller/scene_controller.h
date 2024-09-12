@@ -15,6 +15,8 @@
 #include <motion_component.h>
 #include <entities_data/directional_light_data.h>
 #include <entities_data/spot_light_data.h>
+#include <bezier_surface_data.h>
+#include <animation_component.h>
 
 struct SceneController
 {
@@ -25,7 +27,14 @@ public:
 		ComponentSet<RenderComponent>& render_components,
 		ComponentSet<LightComponent>& light_components,
 		ComponentSet<MotionComponent>& motion_components,
-		ComponentSet<CameraComponent>& camera_components
+		ComponentSet<CameraComponent>& camera_components,
+		ComponentSet<AnimationComponent>& animation_components
+	);
+	void create_bezier_surface(BezierSurfaceData& bezier_data,
+		EntitiesController& entities_controller,
+		ComponentSet<TransformComponent>& transform_components,
+		ComponentSet<RenderComponent>& render_components,
+		ComponentSet<AnimationComponent>& animation_components
 	);
 	void create_tower(
 		TowerData& tower_data,
@@ -90,6 +99,7 @@ private:
 	std::vector<uint> cameras; // 0 - free, 1 - behind car, 2 - static
 	std::vector<uint> spot_lights;
 	std::vector<uint> spot_lights_tiltable;
+	std::vector<uint> bezier_surfaces;
 	uint directional_light;
 	glm::vec3 scene_color;
 	float fog_intensity;

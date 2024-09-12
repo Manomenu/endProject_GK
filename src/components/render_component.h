@@ -7,6 +7,7 @@ struct RenderComponent
 	{
 		uint indices_size;
 		uint mesh_id;
+		uint vbo, ebo;
 
 		uint specular_id = 0;
 		uint diffuse_id = 0;

@@ -10,4 +10,6 @@ struct BezierSurfaceData
     glm::vec3 color;
     std::vector<std::vector<float>> control_points;
     int density = 5;
+
+    bool animated = false;
 };

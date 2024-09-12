@@ -31,7 +31,20 @@ public:
         assert(buffers_set == true);
         return VAO; 
     }
+    const uint& get_VBO() const 
+    {
+        assert(buffers_set == true);
+        return VBO; 
+    }
+    const uint& get_EBO() const 
+    {
+        assert(buffers_set == true);
+        return EBO; 
+    }
 
+    void update(uint VAO, uint EBO, uint VBO, 
+        std::vector<Vertex> vertices,
+        std::vector<uint> indices);
     
 
 private:

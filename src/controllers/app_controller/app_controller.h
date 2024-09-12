@@ -13,6 +13,7 @@
 #include <scene_controller/scene_controller.h>
 #include <config.h>
 #include <light_system/light_system.h>
+#include <animation_system/animation_system.h>
 
 struct AppController_Configuration
 {
@@ -41,10 +42,12 @@ private:
 	CameraSystem camera_system;
 	LightSystem light_system;
 	MotionSystem motion_system;
+	AnimationSystem animation_system;
 
 	ComponentSet<TransformComponent> transform_components;
 	ComponentSet<RenderComponent> render_components;
 	ComponentSet<LightComponent> light_components;
 	ComponentSet<MotionComponent> motion_components;
-	ComponentSet< CameraComponent> camera_components;
+	ComponentSet<CameraComponent> camera_components;
+	ComponentSet<AnimationComponent> animation_components;
 };

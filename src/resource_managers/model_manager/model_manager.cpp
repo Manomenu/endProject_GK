@@ -1,5 +1,159 @@
 #include "model_manager.h"
 
+void ModelManager::load_bezier_surface_to_render_component(RenderComponent& render_component, glm::vec3 color, int density, std::vector<std::vector<float>> control_points, bool isUpdate, uint VAO, uint EBO, uint VBO)
+{
+    render_component.parts.resize(render_component.parts.size() + 1);
+    RenderComponent::RenderPart& part = render_component.parts[0];
+
+    
+    std::vector<Vertex> vertices;
+    std::vector<uint> indices;
+    vertices.resize(density + 1);
+    float distance = 1.0f / density;
+    float eps = 0.00001f;
+    for (int u = 0; u <= density; ++u)
+    {
+        float uLen = u * distance;
+
+        for (int v = 0; v <= density; ++v)
+        {
+            float vLen = v * distance;
+            vertices.push_back(
+                {
+                    { uLen, vLen, bezier_point_height(uLen, vLen, control_points)},  // vertex position
+                    calculate_normal_vec(uLen, vLen, control_points) // vertex normal
+                });
+
+            if (u < density && v < density)
+            {
+                indices.push_back(0 + v + (1 + density) * (0 + u));
+                indices.push_back(1 + v + (1 + density) * (0 + u));
+                indices.push_back(1 + v + (1 + density) * (1 + u));
+
+                indices.push_back(0 + v + (1 + density) * (0 + u));
+                indices.push_back(1 + v + (1 + density) * (1 + u));
+                indices.push_back(0 + v + (1 + density) * (1 + u));
+            }
+        }
+    }
+
+    Mesh mesh;
+    mesh.initialize(vertices, indices);
+
+    part.diffuse = color;
+    part.specular = glm::vec3(color.x * 0.7, color.y * 0.7, color.z * 0.7);
+    part.mesh_id = mesh.get_VAO();
+    part.indices_size = mesh.get_indices().size();
+    part.ebo = mesh.get_EBO();
+    part.vbo = mesh.get_VBO();
+
+    
+    //if (!isUpdate)
+    //{
+    //    
+    //}
+    //else
+    //{
+    //    mesh.update(VAO, EBO, VBO, vertices, indices);
+    //    part.diffuse = color;
+    //    part.specular = glm::vec3(color.x * 0.7, color.y * 0.7, color.z * 0.7);
+    //    part.indices_size = mesh.get_indices().size();
+    //}
+}
+
+glm::vec3 ModelManager::calculate_normal_vec(float x, float y, const std::vector<std::vector<float>>& control_points)
+{
+    glm::vec3 P_u = { 0, 0, 0 };
+    glm::vec3 P_v = { 0, 0, 0 };
+
+    std::vector<std::vector<glm::vec2>> plain;
+    plain.resize(4);
+    for (int u = 0; u < 4; ++u)
+    {
+        for (int v = 0; v < 4; ++v)
+        {
+            plain[u].push_back(glm::vec2(
+                u * 1.0f / 3.0f,
+                v * 1.0f / 3.0f
+            ));
+        }
+    }
+
+    for (int u = 0; u < 3; ++u)
+    {
+        for (int v = 0; v < 4; ++v)
+        {
+            P_u.z += (control_points[u + 1][v] - control_points[u][v])
+                * B(u, 2, x) * B(v, 3, y);
+            P_u.x += (plain[u + 1][v].x - plain[u][v].x)
+                * B(u, 2, x) * B(v, 3, y);
+            P_u.y += (plain[u + 1][v].y - plain[u][v].y)
+                * B(u, 2, x) * B(v, 3, y);
+        }
+    }
+
+    for (int u = 0; u < 4; ++u)
+    {
+        for (int v = 0; v < 3; ++v)
+        {
+            P_v.z += (control_points[u][v + 1] - control_points[u][v])
+                * B(u, 3, x) * B(v, 2, y);
+            P_v.x += (plain[u][v + 1].x - plain[u][v].x)
+                * B(u, 3, x) * B(v, 2, y);
+            P_v.y += (plain[u][v + 1].y - plain[u][v].y)
+                * B(u, 3, x) * B(v, 2, y);
+        }
+    }
+    
+    P_u.x *= 3;
+    P_u.y *= 3;
+    P_u.z *= 3;
+    P_v.x *= 3;
+    P_v.y *= 3;
+    P_v.z *= 3;
+
+    auto N = glm::normalize(glm::cross(P_v, P_u));
+    return N;
+}
+
+float ModelManager::bezier_point_height(float uLen, float vLen, const std::vector<std::vector<float>>& control_points)
+{
+    int control_points_dim_size = control_points.size();
+    float height = 0;
+
+    for (int u = 0; u < control_points_dim_size; ++u)
+    {
+        for (int v = 0; v < control_points_dim_size; ++v)
+        {
+            height += control_points[u][v] * B(u, control_points_dim_size - 1, uLen) * B(v, control_points_dim_size - 1, vLen);
+        }
+    }
+
+    return height;
+}
+
+int ModelManager::calculateNewtonSymbol(uint n, uint k) {
+    if (k > n)
+        return 0;
+
+    if (k == 0 || k == n)
+        return 1;
+
+    double result = 1;
+
+    for (unsigned int i = 1; i <= k; i++)
+    {
+        result = result * (n - i + 1) / i;
+    }
+
+    return (int)result;
+}
+
+float ModelManager::B(int i, int n, float t)
+{
+    return std::pow(t, i) * std::pow((1 - t), n - i) * calculateNewtonSymbol(n, i);
+}
+
 void ModelManager::load_bulb_to_render_component(RenderComponent& render_component, glm::vec3 color)
 {
     render_component.parts.resize(render_component.parts.size() + 1);

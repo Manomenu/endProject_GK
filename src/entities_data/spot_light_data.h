@@ -29,5 +29,5 @@ struct SpotLightData
             float time = 0;
         } offset;
 
-    } follow;
+    } follow; // move to follow_data.h and use it as component inside
 };

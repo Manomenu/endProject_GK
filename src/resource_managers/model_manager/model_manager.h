@@ -10,6 +10,7 @@ struct ModelManager
 public:
     void load_model_to_render_component(const std::string& file_path, RenderComponent& render_component);
     void load_bulb_to_render_component(RenderComponent& render_component, glm::vec3 color);
+    void load_bezier_surface_to_render_component(RenderComponent& render_component, glm::vec3 color, int density, std::vector<std::vector<float>> control_points, bool isUpdate = false, uint VAO = 0, uint EBO = 0, uint VBO = 0);
 
 private:
     std::vector<Texture> textures_loaded;
@@ -18,4 +19,8 @@ private:
     void process_node(aiNode* node, const aiScene* scene, RenderComponent& render_component);
     void process_mesh(aiMesh* mesh, const aiScene* scene, RenderComponent::RenderPart& render_part);
     std::vector<Texture> load_textures(const aiScene* scene, aiMaterial* mat, aiTextureType type, Texture::Type texture_type);
+    float bezier_point_height(float uLen, float vLen, const std::vector<std::vector<float>>& control_points);
+    int calculateNewtonSymbol(uint n, uint k);
+    float B(int i, int n, float t);
+    glm::vec3 calculate_normal_vec(float x, float y, const std::vector<std::vector<float>>& control_points);
 };

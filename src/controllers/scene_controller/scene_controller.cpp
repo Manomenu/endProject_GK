@@ -5,7 +5,8 @@ void SceneController::initialize(EntitiesController& entities_controller,
 	ComponentSet<RenderComponent>& render_components,
 	ComponentSet<LightComponent>& light_components,
 	ComponentSet<MotionComponent>& motion_components,
-	ComponentSet<CameraComponent>& camera_components
+	ComponentSet<CameraComponent>& camera_components,
+	ComponentSet<AnimationComponent>& animation_components
 )
 {
 	scene_color = { 0.5f, 0.5f, 0.9f };
@@ -130,7 +131,49 @@ void SceneController::initialize(EntitiesController& entities_controller,
 		light_components, transform_components, render_components, motion_components
 	);
 
+	BezierSurfaceData bezier_data;
+	bezier_data.color = { 6.0, 2.0, 3.0 };
+	bezier_data.position = glm::vec3(3.4, 0.2, 3);
+	bezier_data.control_points = 
+	{ 
+		{0.0, 0.1, 0.4, 0.0}, // u1
+		{0.2, 0.2, 0.4, 0.1}, // u2
+		{0.1, 0.1, 0.2, 0.7}, // u3
+		{0.0, 0.6, 0.2, 0.0}, // u4
+	};
+	bezier_data.density = 10;
+	bezier_data.scale = glm::vec3(0.3);
+	bezier_data.eulers = glm::vec3(0, 90, 0);
+	bezier_data.animated = true;
+	create_bezier_surface(bezier_data, entities_controller, transform_components, render_components, animation_components);
+}
+
+void SceneController::create_bezier_surface(BezierSurfaceData& bezier_data,
+	EntitiesController& entities_controller,
+	ComponentSet<TransformComponent>& transform_components,
+	ComponentSet<RenderComponent>& render_components,
+	ComponentSet<AnimationComponent>& animation_components
+)
+{
+	uint bezier = entities_controller.get_new_id();
+	bezier_surfaces.push_back(bezier);
+
+	TransformComponent& transform = transform_components[bezier];
+	transform.scale = bezier_data.scale;
+	transform.position = bezier_data.position;
+	transform.eulers = bezier_data.eulers;
 	
+	RenderComponent& render = render_components[bezier];
+	ModelManager model_manager;
+	model_manager.load_bezier_surface_to_render_component(render, bezier_data.color, bezier_data.density, bezier_data.control_points);
+
+	if (bezier_data.animated)
+	{
+		AnimationComponent& animation = animation_components[bezier];
+		animation.isWaving = true;
+		animation.density = bezier_data.density;
+		animation.start_points = bezier_data.control_points;
+	}
 }
 
 void SceneController::create_spot_light(
@@ -204,7 +247,7 @@ void SceneController::create_tower(
 	ComponentSet<TransformComponent>& transform_components, ComponentSet<RenderComponent>& render_components
 )
 {
-	int tower = entities_controller.get_new_id();
+	uint tower = entities_controller.get_new_id();
 	towers.push_back(tower);
 
 	TransformComponent& transform = transform_components[tower];
